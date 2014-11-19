@@ -18,7 +18,9 @@
 #table(:, nv+1) = [];
 #save("data.mat");
 load("data2.mat");
-
+[n, m] = size(table);
+nv = m - 1;
+nc = n - 1;
 #for >=2
 table(rel==2, :) = -table(rel==2, :);
 rel(rel==2) = 1;
@@ -36,36 +38,40 @@ endfor;
 #Adding RHS to the last column
 table = [table table(:, nv+1)];
 table(:, nv+1) = [];
-
+nv += sum(rel) - 1;
 #applying dual simplex
-[valmin, row] = min(table(1:8, end));
+[valmin, row] = min(table(1:nc, end));
+#[valmin, row] = min(table(1:8, end));
+#[valmin, row] = max(table(1:4, end));
 while (valmin < 0)
-    disp("first\n");
-    disp(valmin);
-    disp(table);
+#while (valmin > 0)
+#    disp("first\n");
+#    disp(valmin);
+#    disp(table);
 #    pause;
 #    temp1 = table(row, :end - 1);
 #    temp2 = table(end, :end - 1);
-    temp1 = table(row, 1:8);
-    temp2 = table(end, 1:8);
-    disp("temp1 1");
-    disp(temp1);
-    disp("temp2 1");
-    disp(temp2);
+    temp1 = table(row, 1:nv);
+    temp2 = table(end, 1:nv);
+#    disp("temp1 1");
+#    disp(temp1);
+#    disp("temp2 1");
+#    disp(temp2);
     temp2(temp2==0) = 100000;
     temp1(temp1==0) = 1;
-    disp("temp1 2");
-    disp(temp1);
-    disp("temp2 2");
-    disp(temp2);
+#    disp("temp1 2");
+#    disp(temp1);
+#    disp("temp2 2");
+#    disp(temp2);
     res = temp2 ./ temp1;
 #    disp("second\n");
-    disp(res);
+#    disp(res);
 #    pause;
     [t, col] = min(abs(res));
-    disp("col = ");
-    disp(col);
-    pause;
+#    [t, col] = max(abs(res));
+#    disp("col = ");
+#    disp(col);
+#    pause;
     val = table(row, col);
     table(row, :) /= val;
     for i=1:nc+1
@@ -73,8 +79,16 @@ while (valmin < 0)
             table(i, :) -= table(i, col) * table(row, :);
         endif;
     endfor;
-    [valmin, row] = min(table(:, end));
+    [valmin, row] = min(table(1:nc, end));
+#    [valmin, row] = max(table(:, end));
 endwhile;
-disp(table);
-
-table(end, end);
+#disp(table);
+#disp(nv);
+egg = table((table(:, 1) == 1), nv+1);
+rice = table((table(:, 2) == 1), nv+1);
+dal = table((table(:, 3) == 1), nv+1);
+chapati = table((table(:, 4) == 1), nv+1);
+disp(egg);
+disp(rice);
+disp(dal);
+disp(chapati);
