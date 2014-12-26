@@ -41,7 +41,7 @@ table(:, nv+1) = [];
 nv += sum(rel) - 1;
 #applying dual simplex
 disp(table);
-pause;
+pausel
 [valmin, row] = min(table(1:nc, end));
 while (valmin < 0)
     disp(table);
